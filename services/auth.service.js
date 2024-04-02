@@ -34,6 +34,31 @@ const login = async (email, password) => {
   }
 };
 
+const googleCallback = async (query) => {
+  try {
+    clearNuxtData();
+    const response = await useFetch(`${apiBaseUrl}/sessions/google/callback`, {
+      method: "GET",
+      query,
+    });
+    if (
+      response?.data?.value?.success &&
+      response?.data?.value?.data?.accessToken
+    ) {
+      const accessToken = response.data.value.data.accessToken;
+      if (accessToken) {
+        if (process.client) {
+          localStorage.setItem("authToken", accessToken);
+        }
+      }
+    } else {
+      throw new Error("Invalid credentials!");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const requestVerify = async ({ email, password }) => {
   try {
     clearNuxtData();
@@ -167,6 +192,7 @@ const updateProfile = async (userId, body) => {
 
 export default {
   login,
+  googleCallback,
   requestVerify,
   verify,
   register,

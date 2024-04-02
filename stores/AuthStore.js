@@ -21,6 +21,10 @@ export const useAuthStore = defineStore("AuthStore", {
       await authService.verify(code);
       this.getProfile();
     },
+    async googleCallback(query) {
+      await authService.googleCallback(query);
+      this.getProfile();
+    },
     async register({ name, email, password, passwordConfirm }) {
       await authService.register(name, email, password, passwordConfirm);
       this.getProfile();
