@@ -5,14 +5,6 @@
         <i class="ni ni-chart-bar-32 text-warning text-sm opacity-10"></i>
         <SidenavItem to="/dashboards" mini-icon="C" text="Dashboards" />
       </li>
-      <li class="nav-item d-flex align-items-center mx-4 px-2">
-        <i class="ni ni-align-left-2 text-info text-sm opacity-10"></i>
-        <SidenavItem
-          to="/applications/data-tables"
-          mini-icon="D"
-          text="Data Tables"
-        />
-      </li>
     </ul>
   </div>
 </template>

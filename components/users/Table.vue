@@ -16,6 +16,7 @@
 <script>
 import dayjs from "dayjs";
 import { paginationDefault } from "@/constants/pagination";
+import { useDashboardStore } from "~~/stores/DashboardStore";
 const columns = [
   {
     title: "Index",
@@ -26,20 +27,27 @@ const columns = [
   {
     title: "Full name",
     key: "fullName",
-    width: "30%",
+    width: "27%",
     dataIndex: "fullName",
   },
   {
     title: "Email",
     key: "email",
-    width: "30%",
+    width: "27%",
     dataIndex: "email",
   },
   {
-    title: "Registed at",
+    title: "Verification status",
+    key: "isVerify",
+    align: "center",
+    width: "10%",
+    dataIndex: "isVerify",
+  },
+  {
+    title: "Registered at",
     align: "center",
     key: "createdAt",
-    width: "15%",
+    width: "13%",
     dataIndex: "createdAt",
   },
   {
@@ -53,7 +61,7 @@ const columns = [
     title: "Last active at",
     align: "center",
     key: "lastActiveAt",
-    width: "15%",
+    width: "13%",
     dataIndex: "lastActiveAt",
   },
 ];
@@ -78,21 +86,19 @@ export default {
         ...paginationDefault,
         showTotal: (total) => `Total ${total}`,
       },
+      users: [...this.data],
     };
   },
 
   computed: {
     getPagination() {
       return {
-        ...this.paginationProp,
-        ...paginationDefault,
-        current: +this.paginationProp.page,
-        showTotal: (total) => `Total ${total}`,
+        ...this.pagination,
+        current: +this.pagination.page,
       };
     },
     getFormattedData() {
-      return this.data.map((record, index) => {
-        console.log(record);
+      return this.users.map((record, index) => {
         return {
           ...record,
           index:
@@ -105,8 +111,19 @@ export default {
           lastActiveAt: record.lastActiveAt
             ? dayjs(record.lastActiveAt).format("YYYY/MM/DD hh:mm")
             : null,
+          isVerify: record.verificationAt ? "Yes" : "No",
         };
       });
+    },
+  },
+  watch: {
+    pagination: async function (pagination) {
+      const dashboardStore = useDashboardStore();
+      const indexUsersResponse = await dashboardStore.indexUsers(
+        pagination.page,
+        pagination.size
+      );
+      this.users = indexUsersResponse.users;
     },
   },
 
@@ -114,13 +131,11 @@ export default {
 
   methods: {
     changePagination(params) {
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          page: params.current,
-          size: params.pageSize,
-        },
-      });
+      this.pagination = {
+        ...this.pagination,
+        page: params.current,
+        size: params.pageSize.toString(),
+      };
     },
   },
 };

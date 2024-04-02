@@ -155,7 +155,7 @@ const submitForm = async () => {
       const loginResult = await authStore.login(formData);
       if (loginResult.isVerify) {
         await useToast("success", "Login successfully.");
-        return router.push({ path: "/dashboards/default" });
+        return router.push({ path: "/dashboards" });
       } else {
         authStore.setAuthInfo(formData);
         return router.push({ path: "/auth/verifications/send" });

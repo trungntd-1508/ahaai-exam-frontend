@@ -110,7 +110,7 @@ const submitForm = async () => {
     const code = router.currentRoute.value.query.code;
     await authStore.verify(code);
     await useToast("success", "Verify successfully.");
-    return router.push({ path: "/dashboards/default" });
+    return router.push({ path: "/dashboards" });
   } catch (error) {
     await useToast("error", error.message);
   }
