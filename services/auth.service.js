@@ -111,50 +111,32 @@ const verify = async (code) => {
   }
 };
 
-const register = async (name, email, password, password_confirmation) => {
+const register = async (fullName, email, password, passwordConfirmation) => {
   try {
     clearNuxtData();
-    const body = dataFormatter.serialize({
-      stuff: {
-        type: "users",
-        name,
-        email,
-        password,
-        password_confirmation,
-      },
-    });
+    const body = {
+      fullName,
+      email,
+      password,
+      passwordConfirmation,
+    };
 
-    const { data, error } = await useFetch(`${apiBaseUrl}/register`, {
+    const { error } = await useFetch(`${apiBaseUrl}/register`, {
       method: "POST",
       body,
     });
 
     if (error.value) {
-      const errorMessage = error.value.data.message;
+      const errorMessage = error.value.data.error.message;
       throw new Error(errorMessage);
     }
-
-    const { access_token } = data.value;
-
-    if (process.client) {
-      localStorage.setItem("authToken", access_token);
-    }
-
-    return access_token;
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const logout = async () => {
+const logout = () => {
   try {
-    const access_token = localStorage.getItem("authToken");
-    await useFetch(`${apiBaseUrl}/logout`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
     localStorage.removeItem("authToken");
   } catch (error) {
     throw new Error(error.message);

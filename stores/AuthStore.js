@@ -27,7 +27,6 @@ export const useAuthStore = defineStore("AuthStore", {
     },
     async register({ name, email, password, passwordConfirm }) {
       await authService.register(name, email, password, passwordConfirm);
-      this.getProfile();
     },
     async logout() {
       await authService.logout();
