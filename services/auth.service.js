@@ -1,8 +1,5 @@
-import Jsona from "jsona";
-
 const runtimeConfig = useRuntimeConfig();
 const apiBaseUrl = runtimeConfig.public.apiBaseUrl;
-const dataFormatter = new Jsona();
 
 const login = async (email, password) => {
   try {
@@ -121,15 +118,10 @@ const register = async (fullName, email, password, passwordConfirmation) => {
       passwordConfirmation,
     };
 
-    const { error } = await useFetch(`${apiBaseUrl}/register`, {
+    return await useFetch(`${apiBaseUrl}/register`, {
       method: "POST",
       body,
     });
-
-    if (error.value) {
-      const errorMessage = error.value.data.error.message;
-      throw new Error(errorMessage);
-    }
   } catch (error) {
     throw new Error(error.message);
   }
@@ -152,18 +144,40 @@ const getProfile = async () => {
     },
   });
 
-  return dataFormatter.deserialize(profileResponse.data.value.data.user);
+  return profileResponse.data.value.data.user;
 };
 
-const updateProfile = async (userId, body) => {
-  const access_token = localStorage.getItem("authToken");
+const updateProfile = async (body) => {
+  const accessToken = localStorage.getItem("authToken");
   try {
-    return await useFetch(`${apiBaseUrl}/users/${userId}`, {
+    return await useFetch(`${apiBaseUrl}/me`, {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${access_token}`,
-        Accept: "application/vnd.api+json",
-        "Content-type": "application/vnd.api+json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body,
+    });
+  } catch (error) {
+    useToast("error", error.message);
+  }
+};
+
+const changePassword = async (
+  currentPassword,
+  password,
+  passwordConfirmation
+) => {
+  const body = {
+    currentPassword,
+    password,
+    passwordConfirmation,
+  };
+  const accessToken = localStorage.getItem("authToken");
+  try {
+    return await useFetch(`${apiBaseUrl}/passwords`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
       body,
     });
@@ -181,4 +195,5 @@ export default {
   logout,
   getProfile,
   updateProfile,
+  changePassword,
 };

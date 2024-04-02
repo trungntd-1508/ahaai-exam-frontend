@@ -26,7 +26,7 @@ export const useAuthStore = defineStore("AuthStore", {
       this.getProfile();
     },
     async register({ name, email, password, passwordConfirm }) {
-      await authService.register(name, email, password, passwordConfirm);
+      return await authService.register(name, email, password, passwordConfirm);
     },
     async logout() {
       await authService.logout();
@@ -38,9 +38,17 @@ export const useAuthStore = defineStore("AuthStore", {
     },
     async getProfile() {
       this.currentUser = await authService.getProfile();
+      return this.currentUser;
     },
-    async updateProfile(userId, body) {
-      return await authService.updateProfile(userId, body);
+    async updateProfile(body) {
+      return await authService.updateProfile(body);
+    },
+    async changePassword({ currentPassword, password, passwordConfirmation }) {
+      return await authService.changePassword(
+        currentPassword,
+        password,
+        passwordConfirmation
+      );
     },
     setAuthInfo(authInfo) {
       this.authInfo = authInfo;

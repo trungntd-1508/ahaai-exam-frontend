@@ -37,13 +37,13 @@
                 <form role="form" @submit.prevent="submitForm">
                   <ArgonInput
                     id="name"
-                    v-model="formData.name"
+                    v-model="formData.fullName"
                     name="name"
                     type="text"
                     placeholder="Name"
                     aria-label="Name"
                     :error="isError('name', errorsRef)"
-                    :error-message="getErrorMessage('name', errorsRef)"
+                    :error-message="getErrorMessage('fullName', errorsRef)"
                   />
                   <ArgonInput
                     id="email"
@@ -136,7 +136,7 @@ definePageMeta({
 const router = useRouter();
 const authStore = useAuthStore();
 const formData = reactive({
-  name: "",
+  fullName: "",
   email: "",
   password: "",
   passwordConfirm: "",
@@ -149,7 +149,7 @@ const googleLoginUrl = computed(() => {
 
 const rules = computed(() => {
   return {
-    name: {
+    fullName: {
       required: helpers.withMessage("The name field is required", required),
     },
     email: {
@@ -172,14 +172,31 @@ const v$ = useVuelidate(rules, formData);
 
 const submitForm = async () => {
   v$.value.$validate();
+  errorsRef.value = [];
 
   if (v$.value.$error) {
     const errors = JSON.parse(JSON.stringify(v$.value.$errors));
     errorsRef.value = [...errors];
   } else {
     try {
-      await authStore.register(formData);
-      router.push({ path: "/register/success" });
+      const { error } = await authStore.register(formData);
+      if (error.value) {
+        if (error.value.data.error.errorCode === 120) {
+          for (const key of Object.keys(error.value.data.error.messages)) {
+            errorsRef.value = [
+              ...errorsRef.value,
+              {
+                $property: key,
+                $message: error.value.data.error.messages[key].join("\n"),
+              },
+            ];
+          }
+        } else {
+          throw new Error(error.value.data.error.message);
+        }
+      } else {
+        router.push({ path: "/register/success" });
+      }
     } catch (error) {
       await useToast("error", error.message);
     }
