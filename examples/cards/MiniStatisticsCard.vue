@@ -29,7 +29,7 @@
             >
               {{ typeof title === "string" ? title : title.text }}
             </p>
-            <h5 :class="`mb-0 font-weight-bolder ${value.color}`">
+            <h3 :class="`mb-0 font-weight-bolder ${value.color}`">
               {{
                 (value && typeof value === "string") || value === "number"
                   ? value
@@ -47,7 +47,7 @@
               >
                 {{ percentage.value }}
               </span>
-            </h5>
+            </h3>
             <p v-if="description" class="mt-2 mb-0" v-html="description"></p>
           </div>
         </div>

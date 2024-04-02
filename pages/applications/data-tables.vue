@@ -1069,7 +1069,7 @@
 import { DataTable } from "simple-datatables";
 
 definePageMeta({
-    middleware: ["auth"],
+  middleware: ["auth"],
 });
 
 export default {
