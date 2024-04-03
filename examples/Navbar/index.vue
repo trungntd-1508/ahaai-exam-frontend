@@ -74,7 +74,7 @@
             >
               <li
                 class="mb-2 dropdown-item"
-                @click.prevent="router.push({ path: '/examples/user-profile' })"
+                @click.prevent="router.push({ path: '/me' })"
               >
                 <i class="fas fa-user me-sm-1"></i>
                 <span class="d-sm-inline d-none mx-2">My Profile</span>
