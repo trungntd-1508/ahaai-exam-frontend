@@ -143,6 +143,10 @@ const getProfile = async () => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+  if (profileResponse.error.value) {
+    localStorage.removeItem("authToken");
+    return;
+  }
 
   return profileResponse.data.value.data.user;
 };
